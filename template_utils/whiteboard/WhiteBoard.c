@@ -45,7 +45,11 @@ int c_wb_verbosity(int level)
 }
 
 /* set verbosity level (FORTRAN callable) */
-wordint f77_name(f_wb_verbosity)(wordint *level)
+#pragma weak f_wb_verbosity__=f_wb_verbosity
+#pragma weak f_wb_verbosity_=f_wb_verbosity
+wordint f_wb_verbosity__(wordint *level);
+wordint f_wb_verbosity_(wordint *level);
+wordint f_wb_verbosity(wordint *level)
 {
    wordint old_level = message_level;
    message_level = *level;
@@ -115,13 +119,6 @@ static SYMTAB verb_options[] = {                  /* table for verbosity options
                 { WB_MSG_FATAL,"WB_MSG_FATAL"},
                 { 0, NULL}        } ;
 
-typedef PAGE *PAGEPTR;
-typedef struct{                      /* a whiteboard instance */
-   PAGE *PageChain;
-   int validpages;
-   }WhiteBoard;
-typedef WhiteBoard *WhiteBoardPtr;
-
 static WhiteBoard DummyWhiteboard;    /* dummy whiteboard instance, returned when freeing a whiteboard */
 static WhiteBoardPtr DummyWhiteboardPtr=&DummyWhiteboard;
 static WhiteBoard BaseWhiteboard;     /* permanent whiteboard instance, the only one that can be checkpointed */
@@ -141,7 +138,12 @@ static int new_page(WhiteBoard *WB, int nlines);
    if(status<0) return(NULL);
    return(New_WhiteBoard);
 }
-wordint f77_name(f_wb_new)(WhiteBoard **WB){
+
+#pragma weak f_wb_new__=f_wb_new
+#pragma weak f_wb_new_=f_wb_new
+wordint f_wb_new__(WhiteBoard **WB);
+wordint f_wb_new_(WhiteBoard **WB);
+wordint f_wb_new(WhiteBoard **WB){
    WhiteBoard *New_WhiteBoard=c_wb_new();
    *WB=New_WhiteBoard;
    return( New_WhiteBoard==NULL ? WB_ERROR : WB_OK);
@@ -164,7 +166,12 @@ int c_wb_free(WhiteBoard *WB) {
    free(WB);
    return(WB_OK);
 }
-wordint f77_name(f_wb_free)(WhiteBoard **WB){
+
+#pragma weak f_wb_free__=f_wb_free
+#pragma weak f_wb_free_=f_wb_free
+wordint f_wb_free__(WhiteBoard **WB);
+wordint f_wb_free_(WhiteBoard **WB);
+wordint f_wb_free(WhiteBoard **WB){
    wordint status=c_wb_free(*WB);
    *WB = DummyWhiteboardPtr ;  /* set whiteboard address to address of dummy whiteboard, so that we can trap it */
    return status;
@@ -220,7 +227,11 @@ return ;
 static void (*ErrorHandler)() = &null_error_handler;
 
 /* FORTRAN callable routine to define user error handler */
-void f77_name(f_wb_error_handler)(  void (*UserErrorHandler)() )
+#pragma weak f_wb_error_handler__=f_wb_error_handler
+#pragma weak f_wb_error_handler_=f_wb_error_handler
+void f_wb_error_handler__(  void (*UserErrorHandler)() );
+void f_wb_error_handler_(  void (*UserErrorHandler)() );
+void f_wb_error_handler(  void (*UserErrorHandler)() )
 {
    ErrorHandler = UserErrorHandler;
 }
@@ -307,7 +318,12 @@ static int c_fortran_string_copy(unsigned char *src, unsigned char *dest, int ls
 
 #ifdef NOT_USED
 /* FORTRAN callable version of above routine */
-wordint f77_name(fortran_string_copy)(unsigned char *src, unsigned char *dest, F2Cl lsrc, F2Cl ldest)
+#pragma weak fortran_string_copy__=fortran_string_copy
+#pragma weak fortran_string_copy_=fortran_string_copy
+wordint fortran_string_copy__(unsigned char *src, unsigned char *dest, F2Cl lsrc, F2Cl ldest);
+wordint fortran_string_copy_(unsigned char *src, unsigned char *dest, F2Cl lsrc, F2Cl ldest);
+wordint fortran_string_copy(unsigned char *src, unsigned char *dest, F2Cl lsrc, F2Cl ldest)
+//wordint f77_name(fortran_string_copy)(unsigned char *src, unsigned char *dest, F2Cl lsrc, F2Cl ldest)
 {
    int Ldest = ldest;
    int Lsrc = lsrc;
@@ -413,7 +429,12 @@ int c_wb_checkpoint_name(char *filename){
    strncpy(WhiteBoardCheckpointFile,filename,strlen(filename));
    return(wb_init());
 }
-wordint f77_name(f_wb_checkpoint_name)(char *filename, F2Cl lfilename){
+
+#pragma weak f_wb_checkpoint_name__=f_wb_checkpoint_name
+#pragma weak f_wb_checkpoint_name_=f_wb_checkpoint_name
+wordint f_wb_checkpoint_name__(char *filename, F2Cl lfilename);
+wordint f_wb_checkpoint_name_(char *filename, F2Cl lfilename);
+wordint f_wb_checkpoint_name(char *filename, F2Cl lfilename){
    int Lfilename=lfilename;
    extra_error_message="Setting chekpoint file name";
    WhiteBoardCheckpointFile=(char *)malloc(Lfilename+1);
@@ -428,7 +449,11 @@ int c_wb_checkpoint_get_name(char *filename,int Lfilename){
    return(wb_init());
 }
 
-wordint f77_name(f_wb_checkpoint_get_name)(char *filename, F2Cl lfilename){
+#pragma weak f_wb_checkpoint_get_name__=f_wb_checkpoint_get_name
+#pragma weak f_wb_checkpoint_get_name_=f_wb_checkpoint_get_name
+wordint f_wb_checkpoint_get_name__(char *filename, F2Cl lfilename);
+wordint f_wb_checkpoint_get_name_(char *filename, F2Cl lfilename);
+wordint f_wb_checkpoint_get_name(char *filename, F2Cl lfilename){
    int Lfilename=lfilename;
    extra_error_message="NO checkpoint file found while getting chekpoint file name";
    if(WhiteBoardCheckpointFile==NULL) WB_ERR_EXIT(WB_MSG_FATAL,WB_ERR_ALLOC);
@@ -534,8 +559,16 @@ static int flags_to_options(LINE *line){
 }
 
 /* FORTRAN callable subroutine to get emtadata associated with a whiteboard name */
-wordint f77_name(f_wb_get_meta)(WhiteBoard **WB, unsigned char *name, wordint *elementtype, wordint *elementsize,
+#pragma weak f_wb_get_meta__=f_wb_get_meta
+#pragma weak f_wb_get_meta_=f_wb_get_meta
+wordint f_wb_get_meta__(WhiteBoard **WB, unsigned char *name, wordint *elementtype, wordint *elementsize,
+                                       wordint *elements, wordint *options, F2Cl lname);
+wordint f_wb_get_meta_(WhiteBoard **WB, unsigned char *name, wordint *elementtype, wordint *elementsize,
+                                       wordint *elements, wordint *options, F2Cl lname);
+wordint f_wb_get_meta(WhiteBoard **WB, unsigned char *name, wordint *elementtype, wordint *elementsize,
                                        wordint *elements, wordint *options, F2Cl lname){
+//wordint f77_name(f_wb_get_meta)(WhiteBoard **WB, unsigned char *name, wordint *elementtype, wordint *elementsize,
+//                                       wordint *elements, wordint *options, F2Cl lname){
    int Elementtype, Elementsize, Elements;
    LINE *line;
    PAGE *page;
@@ -629,8 +662,14 @@ int c_wb_get(WhiteBoard *WB, unsigned char *name, char Type, int Ltype,unsigned 
       }
    return(Result);  /* dimension of whiteboard array if array, 0 if scalar, <0 if error */
 }
+
 /* FORTRAN callable version of above routine */
-wordint f77_name(f_wb_get)(WhiteBoard **WB, unsigned char *name,wordint *type, wordint *ltype,void *value, wordint *nval, F2Cl lname){
+#pragma weak f_wb_get__=f_wb_get
+#pragma weak f_wb_get_=f_wb_get
+wordint f_wb_get__(WhiteBoard **WB, unsigned char *name,wordint *type, wordint *ltype,void *value, wordint *nval, F2Cl lname);
+wordint f_wb_get_(WhiteBoard **WB, unsigned char *name,wordint *type, wordint *ltype,void *value, wordint *nval, F2Cl lname);
+wordint f_wb_get(WhiteBoard **WB, unsigned char *name,wordint *type, wordint *ltype,void *value, wordint *nval, F2Cl lname){
+//wordint f77_name(f_wb_get)(WhiteBoard **WB, unsigned char *name,wordint *type, wordint *ltype,void *value, wordint *nval, F2Cl lname){
    int Lname=lname;
    int Ltype=*ltype;
    int Nval=*nval;
@@ -772,8 +811,14 @@ int c_wb_put(WhiteBoard *WB, unsigned char *name,char Type,int Ltype,unsigned ch
    /* return 0 for non character scalars, whiteboard strring length if character scalar, max size of array if array */
    return (Result);
 }
+
 /* FORTRAN version of c_wb_put */
-wordint f77_name(f_wb_put)(WhiteBoard **WB, unsigned char *name,wordint *type, wordint *ltype,void *value, wordint *nval, wordint *options, F2Cl lname){
+#pragma weak f_wb_put__=f_wb_put
+#pragma weak f_wb_put_=f_wb_put
+wordint f_wb_put__(WhiteBoard **WB, unsigned char *name,wordint *type, wordint *ltype,void *value, wordint *nval, wordint *options, F2Cl lname);
+wordint f_wb_put_(WhiteBoard **WB, unsigned char *name,wordint *type, wordint *ltype,void *value, wordint *nval, wordint *options, F2Cl lname);
+wordint f_wb_put(WhiteBoard **WB, unsigned char *name,wordint *type, wordint *ltype,void *value, wordint *nval, wordint *options, F2Cl lname){
+//wordint f77_name(f_wb_put)(WhiteBoard **WB, unsigned char *name,wordint *type, wordint *ltype,void *value, wordint *nval, wordint *options, F2Cl lname){
    char Type=*type;
    int Lname=lname;
    int Ltype=*ltype;
@@ -812,8 +857,14 @@ int c_wb_checkpoint(){
    close(fd);
    return(0);
 }
+
 /* FORTRAN version of above */
-wordint f77_name(f_wb_checkpoint)(WhiteBoard **WB){
+#pragma weak f_wb_checkpoint__=f_wb_checkpoint
+#pragma weak f_wb_checkpoint_=f_wb_checkpoint
+wordint f_wb_checkpoint__(WhiteBoard **WB);
+wordint f_wb_checkpoint_(WhiteBoard **WB);
+wordint f_wb_checkpoint(WhiteBoard **WB){
+//wordint f77_name(f_wb_checkpoint)(WhiteBoard **WB){
    return(c_wb_checkpoint());
 }
 
@@ -827,7 +878,6 @@ wordint f77_name(f_wb_checkpoint)(WhiteBoard **WB){
   blinddata: pointer to be passed to Action routine as a second argument (first argument is matching line)
 */
 
-typedef int (*ACTION)(LINE *,void *);
 int c_wb_check(WhiteBoard *WB, unsigned char *name, int OptionsMask, int Lname, int printflag, ACTION Action, void *blinddata ){
    PAGE *lookuppage;
    int pageno=0;
@@ -881,7 +931,13 @@ int c_wb_check(WhiteBoard *WB, unsigned char *name, int OptionsMask, int Lname, 
       }
 return(-printcount);
 }
-wordint f77_name(f_wb_check)(WhiteBoard **WB, unsigned char *name, wordint *optionsmask, F2Cl lname){
+
+#pragma weak f_wb_check__=f_wb_check
+#pragma weak f_wb_check_=f_wb_check
+wordint f_wb_check__(WhiteBoard **WB, unsigned char *name, wordint *optionsmask, F2Cl lname);
+wordint f_wb_check_(WhiteBoard **WB, unsigned char *name, wordint *optionsmask, F2Cl lname);
+wordint f_wb_check(WhiteBoard **WB, unsigned char *name, wordint *optionsmask, F2Cl lname){
+//wordint f77_name(f_wb_check)(WhiteBoard **WB, unsigned char *name, wordint *optionsmask, F2Cl lname){
    int OptionsMask=*optionsmask;
    int Lname=lname;
    /* print flag on, no action routine is supplied, no blind data pointer is supplied */
@@ -933,7 +989,12 @@ typedef struct{
    } BROADCAST;
 static BROADCAST broadcast_table;
 
-void f77_name(f_wb_bcst_init)(wordint *pe_root, wordint *pe_me, char *domain, void (*broadcast_function)(), void (*allreduce_function)() ){
+#pragma weak f_wb_bcst_init__=f_wb_bcst_init
+#pragma weak f_wb_bcst_init_=f_wb_bcst_init
+void f_wb_bcst_init__(wordint *pe_root, wordint *pe_me, char *domain, void (*broadcast_function)(), void (*allreduce_function)() );
+void f_wb_bcst_init_(wordint *pe_root, wordint *pe_me, char *domain, void (*broadcast_function)(), void (*allreduce_function)() );
+void f_wb_bcst_init(wordint *pe_root, wordint *pe_me, char *domain, void (*broadcast_function)(), void (*allreduce_function)() ){
+//void f77_name(f_wb_bcst_init)(wordint *pe_root, wordint *pe_me, char *domain, void (*broadcast_function)(), void (*allreduce_function)() ){
    broadcast_table.pe_root = *pe_root;
    broadcast_table.pe_me = *pe_me;
    broadcast_table.domain = domain;
@@ -946,7 +1007,12 @@ fprintf(stderr,"Broadcasting %s :-)\n",line->m.name.c);
    return(0);
 }
 
-wordint f77_name(f_wb_bcst)(WhiteBoard **WB, unsigned char *name, wordint *wildcard, F2Cl lname){
+#pragma weak f_wb_bcst__=f_wb_bcst
+#pragma weak f_wb_bcst_=f_wb_bcst
+wordint f_wb_bcst__(WhiteBoard **WB, unsigned char *name, wordint *wildcard, F2Cl lname);
+wordint f_wb_bcst_(WhiteBoard **WB, unsigned char *name, wordint *wildcard, F2Cl lname);
+wordint f_wb_bcst(WhiteBoard **WB, unsigned char *name, wordint *wildcard, F2Cl lname){
+//wordint f77_name(f_wb_bcst)(WhiteBoard **WB, unsigned char *name, wordint *wildcard, F2Cl lname){
    int Lname = lname;
    LINE line;
    int i,status;
@@ -979,7 +1045,12 @@ static int CopyKeyName(LINE *line, void *blinddata){
 }
 
 /* get a list of keys matching a name */
-wordint f77_name(f_wb_get_keys)(WhiteBoard **WB, unsigned char *labels, wordint *nlabels, unsigned char *name, F2Cl llabels, F2Cl lname){
+#pragma weak f_wb_get_keys__=f_wb_get_keys
+#pragma weak f_wb_get_keys_=f_wb_get_keys
+wordint f_wb_get_keys__(WhiteBoard **WB, unsigned char *labels, wordint *nlabels, unsigned char *name, F2Cl llabels, F2Cl lname);
+wordint f_wb_get_keys_(WhiteBoard **WB, unsigned char *labels, wordint *nlabels, unsigned char *name, F2Cl llabels, F2Cl lname);
+wordint f_wb_get_keys(WhiteBoard **WB, unsigned char *labels, wordint *nlabels, unsigned char *name, F2Cl llabels, F2Cl lname){
+//wordint f77_name(f_wb_get_keys)(WhiteBoard **WB, unsigned char *labels, wordint *nlabels, unsigned char *name, F2Cl llabels, F2Cl lname){
    int Lname = lname;
    int status;
    KEYS keys;
@@ -1000,7 +1071,13 @@ int c_wb_lock(WhiteBoard *WB, unsigned char *name, int Lname){
       fprintf(stderr,"locking variables with name beginning with '%s'\n",localname);
    return( c_wb_check(WB, localname, WB_REWRITE_UNTIL, llname, 1, MakeReadOnly, NULL) );
 }
-wordint f77_name(f_wb_lock)(WhiteBoard **WB, unsigned char *name, F2Cl lname){
+
+#pragma weak f_wb_lock__=f_wb_lock
+#pragma weak f_wb_lock_=f_wb_lock
+wordint f_wb_lock__(WhiteBoard **WB, unsigned char *name, F2Cl lname);
+wordint f_wb_lock_(WhiteBoard **WB, unsigned char *name, F2Cl lname);
+wordint f_wb_lock(WhiteBoard **WB, unsigned char *name, F2Cl lname){
+//wordint f77_name(f_wb_lock)(WhiteBoard **WB, unsigned char *name, F2Cl lname){
    int Lname=lname;
    int status = c_wb_lock(*WB, name,Lname);
    return(status);
@@ -1043,7 +1120,13 @@ int c_wb_reload(){
       fprintf(stderr,"whiteboard has been reloaded, variables read only after restart have been locked\n");
    return(WB_OK);
 }
-wordint f77_name(f_wb_reload)(WhiteBoard **WB){
+
+#pragma weak f_wb_reload__=f_wb_reload
+#pragma weak f_wb_reload_=f_wb_reload
+wordint f_wb_reload__(WhiteBoard **WB);
+wordint f_wb_reload_(WhiteBoard **WB);
+wordint f_wb_reload(WhiteBoard **WB){
+//wordint f77_name(f_wb_reload)(WhiteBoard **WB){
    int status=c_wb_reload();
    return(status);
 }
@@ -1572,7 +1655,12 @@ int c_wb_read(WhiteBoard *WB, char *filename, char *package, char *section, int 
 }
 
 /* read a dictionary or user directive file (FORTRAN version) */
-wordint f77_name(f_wb_read)(WhiteBoard **WB, char *package, char *filename, char *section, wordint *options, F2Cl lpackage, F2Cl lfilename,  F2Cl lsection){
+#pragma weak f_wb_read__=f_wb_read
+#pragma weak f_wb_read_=f_wb_read
+wordint f_wb_read__(WhiteBoard **WB, char *package, char *filename, char *section, wordint *options, F2Cl lpackage, F2Cl lfilename,  F2Cl lsection);
+wordint f_wb_read_(WhiteBoard **WB, char *package, char *filename, char *section, wordint *options, F2Cl lpackage, F2Cl lfilename,  F2Cl lsection);
+wordint f_wb_read(WhiteBoard **WB, char *package, char *filename, char *section, wordint *options, F2Cl lpackage, F2Cl lfilename,  F2Cl lsection){
+//wordint f77_name(f_wb_read)(WhiteBoard **WB, char *package, char *filename, char *section, wordint *options, F2Cl lpackage, F2Cl lfilename,  F2Cl lsection){
    int Lfilename=lfilename;
    int Lpackage=lpackage;
    int Lsection=lsection;
@@ -1584,7 +1672,14 @@ wordint f77_name(f_wb_read)(WhiteBoard **WB, char *package, char *filename, char
    return(c_wb_read(*WB, filename, package, section, Options, Lfilename, Lpackage, Lsection));
 }
 
-void f77_name(c_wb_test)() {
+#pragma weak f_wb_test__=c_wb_test
+#pragma weak f_wb_test_=c_wb_test
+#pragma weak f_wb_test=c_wb_test
+void f_wb_test__();
+void f_wb_test_();
+void f_wb_test();
+void c_wb_test() {
+//void f77_name(c_wb_test)() {
    int status,myint,myint2;
    long long myll,myll2;
    float myreal,myreal2;

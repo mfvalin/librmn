@@ -161,6 +161,28 @@ typedef struct WB_page{
    LINE  line[WB_MAXLINESPERPAGE];
    }PAGE;                    /* whiteboard page , size is 16 or 24 bytes + space needed by line */
 
+typedef PAGE *PAGEPTR;
+typedef struct{                      /* a whiteboard instance */
+   PAGE *PageChain;
+   int validpages;
+   }WhiteBoard;
+typedef WhiteBoard *WhiteBoardPtr;
+typedef int (*ACTION)(LINE *,void *);
+
+int c_wb_check(WhiteBoard *WB, unsigned char *name, int OptionsMask, int Lname, int printflag, ACTION Action, void *blinddata );
+int c_wb_checkpoint();
+int c_wb_checkpoint_get_name(char *filename,int Lfilename);
+int c_wb_checkpoint_name(char *filename);
+int c_wb_free(WhiteBoard *WB);
+int c_wb_get(WhiteBoard *WB, unsigned char *name, char Type, int Ltype,unsigned char *value, int Nval, int Lname);
+int c_wb_lock(WhiteBoard *WB, unsigned char *name, int Lname);
+WhiteBoard *c_wb_new();
+int c_wb_put(WhiteBoard *WB, unsigned char *name,char Type,int Ltype,unsigned char *value,int Nval,int Options,int Lname);
+int c_wb_read(WhiteBoard *WB, char *filename, char *package, char *section, int Options, int Lfilename, int Lpackage, int Lsection);
+int c_wb_reload();
+void c_wb_test();
+int c_wb_verbosity(int level);
+
 #else
       type :: whiteboard
         sequence!WARNING: this is requested on AIX but only exists from f95 on
