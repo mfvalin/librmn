@@ -29,7 +29,7 @@
 #include <rpnmacros.h>
 
 #define C_SOURCE_CODE
-#include <WhiteBoard.h>
+#include "WhiteBoard.h"
 
 #define TRIM(string,Lstring) { while( Lstring>0 && string[Lstring-1]==' ' ) Lstring-- ; }
 
