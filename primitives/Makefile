@@ -199,3 +199,4 @@ clean:
 	done \
 	fi
 	rm -f *.o rmnlib_version.f
+	rm -f ftn2c_helper_f.f90 mod_msg.mod msg.f90
