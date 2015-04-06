@@ -1,4 +1,6 @@
-LATESTREV=`svnlook youngest /home/dormrb02/SVN-depots/pub`
+#LATESTREV=`svnlook youngest /home/dormrb02/SVN-depots/pub`
+SVNREV=14
+LATESTREV=14
 cat <<EOT >rmnlib_version.f
 ***s/p rmnlib_version
 *

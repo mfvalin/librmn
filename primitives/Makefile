@@ -37,12 +37,13 @@ TARRLS = beta
 default: obj
 
 rmnlib_v:
-	-rm rmnlib_version.f
+	-rm -f rmnlib_version.f
 	./rmnlib_version
 
-rmnlib_v_sed: 
+rmnlib_v_sed:  rmnlib_v
 	sed "s@EC_ARCH_VAR Date_of_Build@$(EC_ARCH) `date +%c`@" rmnlib_version.f > rmnlib_version_new.f
 	mv rmnlib_version_new.f rmnlib_version.f
+	s.f90 -c rmnlib_version.f
 
 rmnlib_version.o: rmnlib_v_sed
 $(TEMPLIB)(rmnlib_version.o): rmnlib_v_sed rmnlib_version.o
@@ -141,7 +142,7 @@ gen_ec_arch_dir:
 #Creer le repertoire $EC_ARCH 
 	mkdir -p ./$(EC_ARCH)
 
-locallib: gen_ec_arch_dir \
+locallib: gen_ec_arch_dir rmnlib_version.o \
          $(TEMPLIB)(c_baseio.o)        $(TEMPLIB)(c_ccard.o)        $(TEMPLIB)(constnt.o)         $(TEMPLIB)(dmms.o) \
          $(TEMPLIB)(exdb.o)            $(TEMPLIB)(fread32.o) \
          $(TEMPLIB)(getenvc.o)         $(TEMPLIB)(ieeepak.o)        $(TEMPLIB)(iopdatm.o) \
