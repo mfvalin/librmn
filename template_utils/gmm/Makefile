@@ -189,4 +189,6 @@ veryclean:
 	rm -f gmm_checkpoint.ftn90 gmm_create.ftn90 gmm_get.ftn90 gmm_pointer_table.ftn90 \
 	      gmm_update_pti.ftn90
 	rm -f libgmm_*.a gmm_restart gmm.inc 
+	rm -f gmm_checkpoint_interface.cdk90 gmm_create_interface.cdk90 gmm_get_interface.cdk90 \
+              gmm_pointer_table_interface.cdk90 gmm_update_pti_interface.cdk90
 	rm -rf .fo
