@@ -60,8 +60,13 @@ $(TEMPLIB)(rmnlib_version.o): rmnlib_v rmnlib_version.o
 
 include $(RPN_TEMPLATE_LIBS)/include/makefile_suffix_rules.inc
 
+
 .F90.o:
 	s.f90 -c -O $(OPTIMIZ) $<
+.F90.a:
+	s.f90 -c -O $(OPTIMIZ) $<
+	ar rv $@ $*.o
+	rm -f $*.o
 
 #include $(RPN_TEMPLATE_LIBS)/include/new_makefile_suffix_rules.inc
 
@@ -179,7 +184,7 @@ locallib: gen_ec_arch_dir \
          $(TEMPLIB)(arc4.o)            $(TEMPLIB)(md5.o)            $(TEMPLIB)(f_logical2int.o)\
          $(TEMPLIB)(fool_optimizer.o)  $(TEMPLIB)(ftn_prog_args.o)  $(TEMPLIB)(crc16_.o)          $(TEMPLIB)(crc24_.o)\
          $(TEMPLIB)(crc32_.o)          $(TEMPLIB)(crc_16_24_32.o)   $(TEMPLIB)(dlfcn.o)           $(TEMPLIB)(DlInterface.o)\
-         $(TEMPLIB)(register_dl_routines.o) $(TEMPLIB)(msg.o)       $(TEMPLIB)(new_second.o)
+         $(TEMPLIB)(register_dl_routines.o) $(TEMPLIB)(msg.o)       $(TEMPLIB)(new_second.o)      $(TEMPLIB)(fortran_stdio.o)
 
 genlib: rmnlib_v $(OBJECTS)
 #Creer ou mettre a jour la programmatheque 
