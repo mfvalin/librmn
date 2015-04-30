@@ -1,6 +1,6 @@
 .SUFFIXES :
 
-.SUFFIXES : .ftn90 .f90 .ftn .f .c .o .a
+.SUFFIXES : .ftn90 .f90 .F90 .ftn .f .c .o .a
 
 include ../rmnlib_version.inc
 
@@ -59,6 +59,10 @@ $(TEMPLIB)(rmnlib_version.o): rmnlib_v rmnlib_version.o
 #	r.compile -arch $(EC_ARCH) -abi $(ABI) $(OPTIMIZ) -opt "=$(FFLAGS)" -src $*.f
 
 include $(RPN_TEMPLATE_LIBS)/include/makefile_suffix_rules.inc
+
+.F90.o:
+	s.f90 -c -O $(OPTIMIZ) $<
+
 #include $(RPN_TEMPLATE_LIBS)/include/new_makefile_suffix_rules.inc
 
 FTNDECKS= \
@@ -66,7 +70,7 @@ FTNDECKS= \
          second.ftn      stkmem.ftn       tracebck.ftn\
          ccard.ftn       sx_timing_stubs.ftn              f_baseio.ftn \
          vpow_ibm.ftn    ftn2c_helper_f.ftn90             ftn_prog_args.f90\
-         dlfcn.f90       msg.ftn90
+         dlfcn.f90       msg.ftn90       fortran_stdio.F90
 
 CDECKS= \
          c_baseio.c      c_ccard.c       dmms.c           fread32.c \
@@ -116,13 +120,14 @@ OBJECTS= \
          arc4.o		 md5.o               f_logical2int.o  fool_optimizer.o\
          ftn_prog_args.o  crc16_.o           crc24_.o         crc32_.o\
          crc_16_24_32.o    dlfcn.o   register_dl_routines.o    DlInterface.o\
-         msg.o             new_second.o
+         msg.o             new_second.o      fortran_stdio.o
          
 COMDECKS = xxpakc.cdk mgi.h  wafile.h
          
 FICHIERS = $(FTNDECKS) $(FDECKS) $(CDECKS) $(COMDECKS)
 
 
+fortran_stdio.o:	fortran_stdio.F90 fortran_stdio.inc
 c_baseio.o:     c_baseio.c  wafile.h  wafile.h 
 dmms.o:     	dmms.c
 f_baseio.o:     f_baseio.ftn
