@@ -25,9 +25,9 @@
 
 #define NCARMAX 256
 #define NKLEMAX 100
-#define MAJUS 0
-#define MINUS 1
-#define PAREIL 2
+#define MAJUS +1
+#define MINUS -1
+#define PAREIL 0
 #define FAUX 0
 #define VRAI 1
 /*************************************************
@@ -46,8 +46,9 @@
 /*******************************************************************
  *    recuperation des parametres d'appel a un programme           *
  *******************************************************************/
-void c_ccard(char **argv,int argc,char **cle,char val[][NCARMAX],
-             char **def,int n,int *npos)
+static int casse_par_defaut = 0;
+void c_ccard_plus(char **argv,int argc,char **cle,char val[][NCARMAX],
+             char **def,int n,int *npos,int cpd)
 
 /*
  *   James Caveen - RPN 
@@ -66,6 +67,11 @@ void c_ccard(char **argv,int argc,char **cle,char val[][NCARMAX],
  *   contiendra le nombre de parametres positionels.
  *   Si a l'entree, npos = -111, la premiere erreur rencontree
  *   provoquera la fin prematuree du programme appelant.
+ * 
+ * cpd : casse forcee par defaut MAJUS/MINUS/PAREIL (+1/-1/0)
+ * si le nom d'une cle se termine par + , on force des majuscules
+ * si le nom d'une cle se termine par _ , on force des majuscules
+ * si le nom d'une cle se termine par . , on ne fait rien
  */
 {
   void free(), exit();
@@ -93,7 +99,7 @@ void c_ccard(char **argv,int argc,char **cle,char val[][NCARMAX],
     les_clefs[i].cleval = calloc(NCARMAX+1,sizeof(char));
     les_clefs[i].clefin = calloc(NCARMAX+1,sizeof(char));
     }
-  
+  casse_par_defaut = cpd;
   if( *npos == -111)
     plante = VRAI;
   
@@ -235,6 +241,10 @@ void c_ccard(char **argv,int argc,char **cle,char val[][NCARMAX],
    */
   if (retourne_npos)
     (*npos) = npos_interne;
+}
+void c_ccard(char **argv,int argc,char **cle,char val[][NCARMAX],
+             char **def,int n,int *npos) {
+  c_ccard_plus(argv,argc,cle,val,def,n,npos,MAJUS);  // par defaut le vieux ccard met en majuscules
 }
 
 /********************************************************
@@ -383,7 +393,12 @@ int c_jfc_majmin(char *arg)
     *(arg+lng) = '\0';
     return(MINUS);
     }
-  return(MAJUS);
+  if(*(arg+lng) == '+')
+    {
+    *(arg+lng) = '\0';
+    return(MAJUS);
+    }
+  return(casse_par_defaut);
   
 }
 

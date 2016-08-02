@@ -33,13 +33,25 @@
         end
 
 ***S/P CCARD - RECUPERATION DES PARAMETRES D'APPEL A UN PROGRAMME
-
+*ARGUMENTS:
+*       voir CCARD_plus
+**
         SUBROUTINE CCARD(INCLE,DEF,VAL,N,II)
         use ISO_C_BINDING
         INTEGER N,II
         CHARACTER * (*) INCLE(N), DEF(N), VAL(N)
+        call CCARD_plus(INCLE,DEF,VAL,N,II,+1)  ! par defaut, on met en majuscules
+        return
+        end
+***S/P CCARD - RECUPERATION DES PARAMETRES D'APPEL A UN PROGRAMME
+
+        SUBROUTINE CCARD_plus(INCLE,DEF,VAL,N,II,cpd)
+        use ISO_C_BINDING
+        INTEGER N,II
+        CHARACTER * (*) INCLE(N), DEF(N), VAL(N)
+        integer, intent(IN) :: cpd   ! casse par defaut
 *
-*ADAPTATION: JAMES CAVEEN
+*ADAPTATION: JAMES CAVEEN / M.VALIN
 *
 *OBJET(CCARD)   -   RECUPERATION DES PARAMETRES D'APPEL A UN PROGRAMME
 *                   SI LE NOM D'UNE CLEF APPARAIT SEUL LORS DE LA SEQUENCE
@@ -89,6 +101,10 @@
 *                            -  SI II <=0 & <> -111, ON NE RETOURNE PAS
 *                               LE NOMBRE D'ARGUMENTS POSITIONELS ET ON
 *                               CONTINUE MALGRE LES ERREURS
+*      cpd        ENTREE        casse forcee par defaut
+*                            -  +1 on force des majuscules par defaut
+*                            -  -1 on force des minuscules par defaut
+*                            -   0 on ne fait rien par defaut
 *
 **
         PROCEDURE(), pointer :: callback
@@ -149,11 +165,14 @@
             ELSE IF (CLEUP(INDEX:INDEX) .EQ. '_') THEN
                 CLTYPE(I) = -1
                 CLEUP(INDEX:INDEX) = ' '
+            ELSE IF (CLEUP(INDEX:INDEX) .EQ. '+') THEN
+                CLTYPE(I) = +1
+                CLEUP(INDEX:INDEX) = ' '
             ELSE IF(CLEUP(INDEX:INDEX) .EQ. ':') THEN
                 CLTYPE(I) = 2
                 CLEUP(INDEX:INDEX) = ' '
             ELSE
-                CLTYPE(I) = 1
+                CLTYPE(I) = cpd    ! valeur par defaut passee a l'appel
             ENDIF
             CLE(I) = CLEUP
  20     CONTINUE
