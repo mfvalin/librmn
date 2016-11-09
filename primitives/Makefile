@@ -39,17 +39,17 @@ TARRLS = beta
 default: obj
 
 rmnlib_v:
-	-rm rmnlib_version.f
+	-rm rmnlib_version.f90
 	./rmnlib_version $(RMNLIB_VERSION)
 
-rmnlib_version.f: rmnlib_v
+rmnlib_version.f90: rmnlib_v
 	
 rmnlib_v_sed: 
-	sed "s@EC_ARCH_VAR Date_of_Build@$(EC_ARCH) `date +%c| cut -d' ' -f1-6`@" rmnlib_version.f > rmnlib_version_new.f
-	mv rmnlib_version_new.f rmnlib_version.f
+	sed "s@EC_ARCH_VAR Date_of_Build@$(EC_ARCH) `date +%c| cut -d' ' -f1-6`@" rmnlib_version.f90 > rmnlib_version_new.f90
+	mv rmnlib_version_new.f90 rmnlib_version.f90
 
 #rmnlib_version.o: rmnlib_v_sed
-rmnlib_version.o: rmnlib_v rmnlib_version.f
+rmnlib_version.o: rmnlib_v rmnlib_version.f90
 
 #$(TEMPLIB)(rmnlib_version.o): rmnlib_v_sed rmnlib_version.o
 $(TEMPLIB)(rmnlib_version.o): rmnlib_v rmnlib_version.o
@@ -142,7 +142,7 @@ ftn2c_helper_f.f90: ftn2c_helper_f.ftn90
 ftn2c_helper_f.o: ftn2c_helper_f.ftn90
 
 tarball: $(FICHIERS) rmnlib_v
-	tar cfzv /data/armnraid1/www/ssm/sources/primitives_$(TARRLS)_all.tgz $(FICHIERS) rmnlib_version.f Makefile 
+	tar cfzv /data/armnraid1/www/ssm/sources/primitives_$(TARRLS)_all.tgz $(FICHIERS) rmnlib_version.f90 Makefile 
   
 obj: $(OBJECTS) 
 #Produire les fichiers objets (.o) pour tous les fichiers
@@ -198,4 +198,4 @@ clean:
 	rm -f $$fn.f; \
 	done \
 	fi
-	rm -f *.o rmnlib_version.f
+	rm -f *.o rmnlib_version.f90
