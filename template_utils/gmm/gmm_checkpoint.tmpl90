@@ -38,7 +38,8 @@
   use gmm_internals
   implicit none
   logical read_or_write
-  integer code,istat,fnom
+  integer code,istat,fnom,l_duplicate,s_duplicate
+  character(len=32) :: c_duplicate
   external fnom
 !
 
@@ -89,6 +90,20 @@
         return
       endif
     endif
+    call get_environment_variable('GMM_DUPLICATE_RESTART',c_duplicate,l_duplicate,s_duplicate)
+    duplicate = s_duplicate <= 0
+    if (duplicate) then
+      file_unit2 = 0
+      istat=fnom(file_unit2,'gmm_restart2','SEQ+UNF+FTN',0)  ! open checkpoint file 2
+      if (gmm_verbose_level == GMM_MSG_DEBUG) then
+        print *,'open restart2 file, status=',istat
+      endif
+      if (istat .lt. 0) then
+        file_unit2 = 0
+        gmm_checkpoint_all = GMM_ERROR
+        return
+      endif
+    endif
 !!@LOOP
 #define EXTENSION Cat(DATACODE,DATALENGTH,DIM)
     call Cat(gmm_checkpoint_,EXTENSION,)(.false.)
@@ -96,6 +111,7 @@
 !!@END
   endif
 999 call fclos(file_unit)
+    if(duplicate) call fclos(file_unit2)
     file_unit=0
   gmm_checkpoint_all = GMM_OK
   end function gmm_checkpoint_all
@@ -177,13 +193,19 @@
             print *,'writing field ',directory(i)%entry(j)%name
           endif
           write(file_unit)EXTENSION
+          if(duplicate) write(file_unit2)EXTENSION
           write(file_unit)directory(i)%entry(j)%name
+          if(duplicate) write(file_unit2)directory(i)%entry(j)%name
           write(file_unit)directory(i)%entry(j)%l(1:DIM)
+          if(duplicate) write(file_unit2)directory(i)%entry(j)%l(1:DIM)
           attrib = directory(i)%entry(j)%a
           attrib%flags = iand(attrib%flags,FLAGS_KEPT_IN_RESTART)
           write(file_unit)attrib
+          if(duplicate) write(file_unit2)attrib
           write(file_unit)directory(i)%entry(j)%data_type
+          if(duplicate) write(file_unit2)directory(i)%entry(j)%data_type
           write(file_unit)Cat(gmm_ptrs, EXTENSION,)(directory(i)%entry(j)%pointer_table_index)%p
+          if(duplicate) write(file_unit2)Cat(gmm_ptrs, EXTENSION,)(directory(i)%entry(j)%pointer_table_index)%p
         endif
       enddo
     enddo
