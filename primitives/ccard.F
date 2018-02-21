@@ -29,7 +29,7 @@
         data there_is_callback / .false. /
 
         there_is_callback = .true.
-        call C_F_PPROCPOINTER(C_FUNLOC(p),callback)
+        call C_F_PROCPOINTER(C_FUNLOC(p),callback)
 !       callback => p
         return
         end
