@@ -18,15 +18,14 @@
 * * Boston, MA 02111-1307, USA.
 * */
 #define NKLEMAX 1024
-
+	module ccard_private
+	  USE ISO_C_BINDING
+	  PROCEDURE(), pointer, save :: callback => NULL()
+	  logical, save :: there_is_callback = .false.
+	end module ccard_private
         SUBROUTINE CCARD_callback(p)
-        USE ISO_C_BINDING
+        USE ccard_private
         external p
-        PROCEDURE(), pointer :: callback
-        logical :: there_is_callback
-        common /qqqcbk1/ callback
-        common /qqqcbk2/ there_is_callback
-        data there_is_callback / .false. /
 
         there_is_callback = .true.
         call C_F_PROCPOINTER(C_FUNLOC(p),callback)
@@ -37,7 +36,7 @@
 ***S/P CCARD - RECUPERATION DES PARAMETRES D'APPEL A UN PROGRAMME
 
         SUBROUTINE CCARD(INCLE,DEF,VAL,N,II)
-        use ISO_C_BINDING
+        use ccard_private
         INTEGER N,II
         CHARACTER * (*) INCLE(N), DEF(N), VAL(N)
 *
@@ -93,10 +92,6 @@
 *                               CONTINUE MALGRE LES ERREURS
 *
 **
-        PROCEDURE(), pointer :: callback
-        logical :: there_is_callback
-        common /qqqcbk1/ callback
-        common /qqqcbk2/ there_is_callback
 *
         INTEGER QQQOBM,LONGUEUR, QQQOENV
         EXTERNAL QQQOBM, QQQSAP, LOW2UP, QQQTRNS,LONGUEUR
