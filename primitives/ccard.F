@@ -21,13 +21,11 @@
 	module ccard_private
 	  USE ISO_C_BINDING
 	  PROCEDURE(), pointer, save :: callback => NULL()
-	  logical, save :: there_is_callback = .false.
 	end module ccard_private
         SUBROUTINE CCARD_callback(p)
         USE ccard_private
         external p
 
-        there_is_callback = .true.
         call C_F_PROCPOINTER(C_FUNLOC(p),callback)
 !       callback => p
         return
@@ -238,7 +236,7 @@
             INTERNE = INTERNE + 1
           ELSE IF(STATUS .EQ. 5) THEN
               CALL QQQSAP(CLE,DEF,VAL,N)
-              if(there_is_callback) then
+              if(associated(callback)) then
                 print *,''
                 call callback
               endif
