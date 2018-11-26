@@ -1,10 +1,10 @@
-      integer, parameter ::  MAX_PAGES    =  16      ! max number of directory pages
+      integer, parameter ::  MAX_PAGES    =  32      ! max number of directory pages
       integer, parameter ::  PAGE_SIZE    = 128      ! max number of entries in directory page
       integer, parameter ::  NTRY_NB_SHFT =   0      ! shift for entry number in page
       integer, parameter ::  NTRY_NB_MASK = 127      ! mask for entry number in page
       integer, parameter ::  PAGE_NB_SHFT =   7      ! shift for page number in directory
-      integer, parameter ::  PAGE_NB_MASK =  15      ! mask for page number in directory
-      integer, parameter ::  EXTN_NB_SHFT =  11      ! shift for extension code
+      integer, parameter ::  PAGE_NB_MASK =  31      ! mask for page number in directory
+      integer, parameter ::  EXTN_NB_SHFT =  12      ! shift for extension code
       integer, parameter ::  EXTN_NB_MASK = 511      ! mask for extension code
       integer, parameter ::  MAGC_NB_SHFT =  32       ! shift for magic number
       integer, parameter ::  MAGC_NB_MASK =  -1       ! mask for magic number (all ones)
