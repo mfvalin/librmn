@@ -5,6 +5,7 @@
 #include <math.h>
 #include <rpnmacros.h>
 #include <string.h>
+#include <pthread.h>
 
 #define NMAXGRIDS 32
 #define NMAXSETS  NMAXGRIDS * (NMAXGRIDS - 1)
@@ -197,6 +198,7 @@ typedef struct
 typedef struct
 {
   wordint index;
+  wordint grid_index;
   wordint flags;
   wordint i1, i2, j1, j2;
   wordint ni,nj;
